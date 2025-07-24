@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import './ProductList.css'
+import { useDispatch } from 'react-redux';
+import './ProductList.css';
 import CartItem from './CartItem';
-import addItem  from './CartSlice';
+import {addItem}  from './CartSlice';
+
+
 
 function ProductList({ onHomeClick }) {
+    const dispatch = useDispatch();
+    const [addedToCart, setAddedToCart] = useState({});
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-
+   
     const plantsArray = [
         {
             category: "Air Purifying Plants",
@@ -254,6 +259,13 @@ function ProductList({ onHomeClick }) {
         e.preventDefault();
         setShowCart(false);
     };
+    const handleAddToCart = (product) => {
+        dispatch(addItem(product)); // Dispatch the action to add the product to the cart (Redux action)
+        setAddedToCart((prevState) => ({ // Update the local state to reflect that the product has been added
+          ...prevState, // Spread the previous state to retain existing entries
+          [product.name]: true, // Set the current product's name as a key with value 'true' to mark it as added
+        }));
+      };
     return (
         <div>
             <div className="navbar" style={styleObj}>
@@ -292,7 +304,7 @@ function ProductList({ onHomeClick }) {
                         <div className="product-title">{plant.name}</div> {/* Display plant name */}
                         {/* Display other plant details like description and cost */}
                         <div className="product-description">{plant.description}</div> {/* Display plant description */}
-                        <div className="product-cost">${plant.cost}</div> {/* Display plant cost */}
+                        <div className="product-cost">{plant.cost}</div> {/* Display plant cost */}
                         <button
                         className="product-button"
                         onClick={() => handleAddToCart(plant)} // Handle adding plant to cart
@@ -311,16 +323,4 @@ function ProductList({ onHomeClick }) {
         </div>
     );
 }
-const [addedToCart, setAddedToCart] = useState({});
-
-function handleAddToCart(product){
-    const handleAddToCart = (product) => {
-        dispatch(addItem(product)); // Dispatch the action to add the product to the cart (Redux action)
-        setAddedToCart((prevState) => ({ // Update the local state to reflect that the product has been added
-          ...prevState, // Spread the previous state to retain existing entries
-          [product.name]: true, // Set the current product's name as a key with value 'true' to mark it as added
-        }));
-      };
-}
-
 export default ProductList;
